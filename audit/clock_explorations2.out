@@ -1,0 +1,20 @@
+TEST 4 — VOLATILITY CLOCK (does vol PEAK at a consistent halving-day?)
+  day-of-PEAK-vol after halving:  E1 157d, E2 585d, E3 394d  (range 428d)
+  cross-cycle corr of the vol-vs-phase curve: 0.15
+  placebo (random-offset): mean 0.05, P(random >= real) = 19.4%
+
+TEST 5 — RETURN-BY-PHASE (boom zone vs bust zone, pooled across cycles)
+    phase (days after halving)   avg fwd-90d return      n
+                         0-130               +107%    520  ++++++++++++++++++++++
+                       130-260                +68%    520  ++++++++++++++
+                       260-390               +104%    520  +++++++++++++++++++++
+                       390-520                +36%    520  ++++++++
+                       520-650                -22%    520  -----
+                       650-780                -20%    432  ----
+                       780-910                -10%    390  ---
+                      910-1040                +53%    390  +++++++++++
+                     1040-1170                 +3%    390  +
+                     1170-1300                +24%    390  +++++
+
+  boom->bust sign flip around day 520 after halving  (top window = 525-546d)
+  (the bust zone is where the 'cash' timing rule sits out; the top window sits at the flip)

@@ -1,0 +1,20 @@
+TEST 1 — SEASONALITY OVERLAY (do cycles trace the same shape in halving-time?)
+  cross-cycle correlation of the halving-aligned price path: E1-E2 0.82, E1-E3 0.72, E2-E3 0.61  (mean 0.72)
+  placebo (random-offset alignment): mean corr 0.02, P(random >= halving alignment) = 2.8%
+
+TEST 2 — PLACEBO ANCHORS (is the tightness halving-specific or any 4-year clock?)
+  tops' days-after-anchor RANGE:  halving 21d   election 68d   fixed-4yr 1423d
+  random 4-year clocks: median range 71d, P(random clock <= halving's 21d) = 0.0%
+  -> the halving anchor is tighter than 100% of random 4-year clocks
+
+TEST 3 — CROSS-ASSET (does ETH align to the BTC halving clock?)
+  ETH mechanical tops and their days-since-BTC-halving:
+    2015-08-13  $      2   988 days after BTC halving
+    2016-03-13  $     14   1201 days after BTC halving
+    2016-06-16  $     21   1296 days after BTC halving
+    2017-06-12  $    389   338 days after BTC halving
+    2018-01-13  $  1,380   553 days after BTC halving
+    2021-05-11  $  4,156   365 days after BTC halving
+    2021-11-08  $  4,811   546 days after BTC halving
+    2025-08-22  $  4,831   489 days after BTC halving
+  ETH mature-top days-after-halving: [988, 1201, 1296, 553, 546, 489]  (BTC tops: 525/546/534)

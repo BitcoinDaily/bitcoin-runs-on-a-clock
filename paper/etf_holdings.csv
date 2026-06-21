@@ -1,0 +1,15 @@
+# US spot bitcoin ETF -- total BTC held (all funds combined: IBIT/FBTC/GBTC/ARKB/BITB/etc.)
+# Dated PUBLIC milestone anchors from ETF trackers + reporting (Farside / SoSoValue / The Block /
+# CryptoSlate). This is NOT a fabricated daily curve -- each row is a separately citable public
+# data point; the connecting line in the chart is an interpolation between cited anchors only.
+# Axis is total BTC HELD (price-independent), the standard "1M BTC / ~6% of supply" framing.
+# Jan-2024 start ~0.62M was the GBTC trust conversion (legacy holdings rolling into the ETF
+# wrapper), not new buying; everything above that is net-new ETF accumulation.
+# Percent-of-supply is of CIRCULATING bitcoin (~19.8-19.95M), matching the public 5.26%/~6% quotes.
+# As-of: 2026-06-16.
+date,btc_held,label,source
+2024-01-11,619000,0.62M launch (GBTC),GBTC trust conversion Jan 2024
+2024-10-24,1040401,1.0M (5.3% supply),The Block / BitcoinWorld 2024-10-24
+2025-01-11,1130000,1.13M (1-yr),CryptoSlate 1-yr anniversary 2025-01-11
+2025-12-31,1310000,1.31M peak,end-2025 reporting (IBIT ~777k)
+2026-06-16,1286165,1.29M now (~6%),walletpilot / SoSoValue 2026-06-16

@@ -1,0 +1,174 @@
+//@version=6
+indicator("Satoshi Clock — CLOCK & SPRING", "SatClock", overlay = true, max_lines_count = 30, max_labels_count = 500, max_boxes_count = 10)
+
+// ============================================================================
+// THE SATOSHI CLOCK — two time-anchored coordinates for Bitcoin
+//   CLOCK  = days since the most recent halving (the angle of the 4-year cycle)
+//   SPRING = deviation of price from a CAUSALLY-fit power law in time (the radius)
+// Companion to: Molnar (2026), "Bitcoin Runs on a Clock: Why Every Price
+// Indicator Dies and the Halving Clock Doesn't".
+//
+// Works on DAILY, WEEKLY, or MONTHLY. Use a LOG price scale and the longest
+// history available (BNC:BLX, INDEX:BTCUSD, or BITSTAMP:BTCUSD). The power-law
+// fit is expanding-window: every bar uses only data up to that bar (no
+// lookahead). It needs ~one cycle of history to warm up.
+//
+// Mature-cycle record (ex post, see the paper for nulls and caveats):
+//   tops 525 / 546 / 534 days after halving · bottoms 889 / 912 days after
+//   halving (bottom regularity is weaker: partly process-intrinsic).
+// ============================================================================
+
+// ---------------- inputs ----------------
+grpD = "Display"
+showCorridor = input.bool(true,  "Power-law corridor (causal fit)", group = grpD)
+showWindows  = input.bool(true,  "Shade cycle windows (top 525-546d, bottom 889-912d)", group = grpD)
+showProject  = input.bool(true,  "Project the next windows forward", group = grpD)
+showHalvings = input.bool(true,  "Halving lines", group = grpD)
+showTable    = input.bool(true,  "Status table", group = grpD)
+tblPosIn     = input.string("Bottom Right", "Table position", group = grpD, options = ["Bottom Right", "Bottom Left", "Bottom Center", "Top Right", "Top Left", "Middle Right", "Middle Left"])
+
+grpS = "Buy / Sell signals"
+showSignals  = input.bool(true, "Show buy/sell markers", group = grpS)
+sigMode      = input.string("Cycle windows", "Trigger", group = grpS, options = ["Cycle windows", "SPRING extremes", "Both"])
+springSell   = input.float(1.5,  "SPRING sell level (+z)", step = 0.1, group = grpS)
+springBuy    = input.float(-1.0, "SPRING buy level (-z)",  step = 0.1, group = grpS)
+
+grpF = "Calibration"
+fitWarmDays  = input.int(1095, "Fit warmup (days of history)",  minval = 200, group = grpF)
+zWarmDays    = input.int(1460, "Z-score warmup (days)",         minval = 200, group = grpF)
+
+// ---------------- time anchors ----------------
+DAY = 86400000
+GENESIS = timestamp("2009-01-03T00:00:00+0000")
+float tDays = (time - GENESIS) / DAY
+
+H1 = timestamp("2012-11-28T00:00:00+0000")
+H2 = timestamp("2016-07-09T00:00:00+0000")
+H3 = timestamp("2020-05-11T00:00:00+0000")
+H4 = timestamp("2024-04-20T00:00:00+0000")
+H5 = timestamp("2028-04-15T00:00:00+0000")   // estimated; depends on block times
+halvings = array.from(H1, H2, H3, H4, H5)
+
+int lastH = time >= H5 ? H5 : time >= H4 ? H4 : time >= H3 ? H3 : time >= H2 ? H2 : time >= H1 ? H1 : na
+float clock = na(lastH) ? na : (time - lastH) / DAY
+
+// window edges (days after halving)
+TOP_A = 525, TOP_B = 546, BOT_A = 889, BOT_B = 912
+
+// ---------------- causal expanding-window power-law fit: ln P = a + b ln t ----
+var float Sx = 0.0, var float Sy = 0.0, var float Sxx = 0.0, var float Sxy = 0.0, var int nFit = 0
+float x = tDays > 0 ? math.log(tDays) : na
+float y = math.log(close)
+if not na(x) and barstate.isconfirmed
+    Sx := Sx + x, Sy := Sy + y, Sxx := Sxx + x * x, Sxy := Sxy + x * y, nFit := nFit + 1
+float denom = nFit * Sxx - Sx * Sx
+float bSlope = (nFit >= 10 and tDays >= fitWarmDays and denom > 0) ? (nFit * Sxy - Sx * Sy) / denom : na
+float aInt   = na(bSlope) ? na : (Sy - bSlope * Sx) / nFit
+float resid  = na(bSlope) or na(x) ? na : y - (aInt + bSlope * x)
+
+// expanding z-score of residual (SPRING)
+var float Sr = 0.0, var float Srr = 0.0, var int nZ = 0
+if not na(resid) and barstate.isconfirmed
+    Sr := Sr + resid, Srr := Srr + resid * resid, nZ := nZ + 1
+float muR = (nZ >= 10 and tDays >= zWarmDays) ? Sr / nZ : na
+float sdR = na(muR) ? na : math.sqrt(math.max(Srr / nZ - muR * muR, 1e-12))
+float spring = na(sdR) or na(resid) ? na : (resid - muR) / sdR
+
+// ---------------- corridor ----------------
+float lnC = na(bSlope) or na(muR) or na(x) ? na : aInt + bSlope * x + muR
+plot(showCorridor and not na(lnC) ? math.exp(lnC + 2 * sdR) : na, "+2z", color = color.new(color.red, 25))
+plot(showCorridor and not na(lnC) ? math.exp(lnC + sdR)     : na, "+1z", color = color.new(color.red, 55))
+plot(showCorridor and not na(lnC) ? math.exp(lnC)           : na, "Power-law trend", color = color.new(color.orange, 0), linewidth = 2)
+plot(showCorridor and not na(lnC) ? math.exp(lnC - sdR)     : na, "-1z", color = color.new(color.teal, 55))
+plot(showCorridor and not na(lnC) ? math.exp(lnC - 2 * sdR) : na, "-2z", color = color.new(color.teal, 25))
+
+// ---------------- window shading (historical, via bgcolor) ----------------
+bool inTopWin = not na(clock) and clock >= TOP_A and clock <= TOP_B
+bool inBotWin = not na(clock) and clock >= BOT_A and clock <= BOT_B
+bgcolor(showWindows and inTopWin ? color.new(color.red, 82) : showWindows and inBotWin ? color.new(color.teal, 85) : na)
+
+// ---------------- halving lines ----------------
+if showHalvings and barstate.isconfirmed
+    for hTime in halvings
+        if time[1] < hTime and time >= hTime
+            line.new(hTime, low, hTime, high, xloc = xloc.bar_time, extend = extend.both, color = color.new(color.gray, 40), style = line.style_dashed)
+            label.new(hTime, high, hTime == H5 ? "halving (est.)" : "halving", xloc = xloc.bar_time, style = label.style_label_down, color = color.new(color.gray, 70), textcolor = color.white, size = size.small)
+
+// ---------------- buy / sell signals ----------------
+bool enterTop = not na(clock) and clock >= TOP_A and (na(clock[1]) or clock[1] < TOP_A)
+bool enterBot = not na(clock) and clock >= BOT_A and (na(clock[1]) or clock[1] < BOT_A)
+bool sellSig = false, bool buySig = false
+if sigMode == "Cycle windows" or sigMode == "Both"
+    sellSig := enterTop
+    buySig  := enterBot
+if sigMode == "SPRING extremes" or sigMode == "Both"
+    sellSig := sellSig or (not na(spring) and spring > springSell and (na(spring[1]) or spring[1] <= springSell))
+    buySig  := buySig  or (not na(spring) and spring < springBuy  and (na(spring[1]) or spring[1] >= springBuy))
+plotshape(showSignals and buySig,  "BUY",  shape.labelup,   location.belowbar, color.new(color.green, 0), text = "BUY",  textcolor = color.white, size = size.small)
+plotshape(showSignals and sellSig, "SELL", shape.labeldown, location.abovebar, color.new(color.red, 0),   text = "SELL", textcolor = color.white, size = size.small)
+
+// ---------------- next-window helpers (forward projection) ----------------
+f_nextWin(int offA, int offB) =>
+    int bestS = na
+    int bestE = na
+    for h in halvings
+        int s = h + offA * DAY
+        if s > time and (na(bestS) or s < bestS)
+            bestS := s
+            bestE := h + offB * DAY
+    [bestS, bestE]
+
+[sellS, sellE] = f_nextWin(TOP_A, TOP_B)
+[buyS,  buyE]  = f_nextWin(BOT_A, BOT_B)
+daysToSell = na(sellS) ? na : (sellS - time) / DAY
+daysToBuy  = na(buyS)  ? na : (buyS  - time) / DAY
+string sellTxt = inTopWin ? "ACTIVE now" : na(daysToSell) ? "n/a" : str.tostring(daysToSell, "#") + " days"
+string buyTxt  = inBotWin ? "ACTIVE now" : na(daysToBuy)  ? "n/a" : str.tostring(daysToBuy,  "#") + " days"
+
+// ---------------- project the next windows forward as shaded boxes ----------------
+var box sellBox = na
+var box buyBox = na
+var label sellLbl = na
+var label buyLbl = na
+if barstate.islast
+    box.delete(sellBox), box.delete(buyBox), label.delete(sellLbl), label.delete(buyLbl)
+    if showProject and showWindows and not na(sellS)
+        sellBox := box.new(sellS, 1e9, sellE, 1e-3, xloc = xloc.bar_time, bgcolor = color.new(color.red, 82), border_color = color.new(color.red, 70))
+        sellLbl := label.new(sellS, close, "NEXT SELL\n" + str.format_time(sellS, "yyyy-MM-dd", "UTC") + " .. " + str.format_time(sellE, "yyyy-MM-dd", "UTC"), xloc = xloc.bar_time, style = label.style_label_down, color = color.new(color.red, 10), textcolor = color.white, size = size.small)
+    if showProject and showWindows and not na(buyS)
+        buyBox := box.new(buyS, 1e9, buyE, 1e-3, xloc = xloc.bar_time, bgcolor = color.new(color.teal, 84), border_color = color.new(color.teal, 70))
+        buyLbl := label.new(buyS, close, "NEXT BUY\n" + str.format_time(buyS, "yyyy-MM-dd", "UTC") + " .. " + str.format_time(buyE, "yyyy-MM-dd", "UTC"), xloc = xloc.bar_time, style = label.style_label_up, color = color.new(color.green, 10), textcolor = color.white, size = size.small)
+
+// ---------------- status table ----------------
+tblPos = tblPosIn == "Top Right" ? position.top_right : tblPosIn == "Top Left" ? position.top_left : tblPosIn == "Bottom Left" ? position.bottom_left : tblPosIn == "Bottom Center" ? position.bottom_center : tblPosIn == "Middle Right" ? position.middle_right : tblPosIn == "Middle Left" ? position.middle_left : position.bottom_right
+var table tbl = table.new(tblPos, 2, 7, bgcolor = color.new(color.black, 15), border_width = 1, border_color = color.new(color.gray, 60))
+if showTable and barstate.islast
+    string phase = na(clock) ? "n/a" : clock < TOP_A ? "pre top-window" : clock <= TOP_B ? "TOP WINDOW" : clock < BOT_A ? "post-top / bear" : clock <= BOT_B ? "BOTTOM WINDOW" : "late cycle"
+    table.cell(tbl, 0, 0, "SATOSHI CLOCK", text_color = color.orange, text_size = size.small)
+    table.cell(tbl, 1, 0, phase, text_color = inTopWin ? color.red : inBotWin ? color.teal : color.white, text_size = size.small)
+    table.cell(tbl, 0, 1, "CLOCK", text_color = color.silver, text_size = size.small)
+    table.cell(tbl, 1, 1, na(clock) ? "n/a" : str.tostring(clock, "#") + "d after halving", text_color = color.white, text_size = size.small)
+    table.cell(tbl, 0, 2, "SPRING (z)", text_color = color.silver, text_size = size.small)
+    table.cell(tbl, 1, 2, na(spring) ? "warming up" : str.tostring(spring, "+#.##"), text_color = na(spring) ? color.gray : spring > 0 ? color.red : color.teal, text_size = size.small)
+    table.cell(tbl, 0, 3, "exponent n", text_color = color.silver, text_size = size.small)
+    table.cell(tbl, 1, 3, na(bSlope) ? "warming up" : str.tostring(bSlope, "#.##"), text_color = color.white, text_size = size.small)
+    table.cell(tbl, 0, 4, "next SELL window", text_color = color.silver, text_size = size.small)
+    table.cell(tbl, 1, 4, sellTxt, text_color = inTopWin ? color.red : color.white, text_size = size.small)
+    table.cell(tbl, 0, 5, "next BUY window", text_color = color.silver, text_size = size.small)
+    table.cell(tbl, 1, 5, buyTxt, text_color = inBotWin ? color.teal : color.white, text_size = size.small)
+    table.cell(tbl, 0, 6, "next BUY dates", text_color = color.silver, text_size = size.small)
+    table.cell(tbl, 1, 6, na(buyS) ? "n/a" : str.format_time(buyS, "yyyy-MM-dd", "UTC") + " .. " + str.format_time(buyE, "yyyy-MM-dd", "UTC"), text_color = color.white, text_size = size.small)
+
+// ---------------- timeframe guard ----------------
+bool tfOK = timeframe.isdaily or timeframe.isweekly or timeframe.ismonthly
+if not tfOK and barstate.islast
+    var label warn = na
+    label.delete(warn)
+    warn := label.new(bar_index, high, "Satoshi Clock works on Daily / Weekly / Monthly", style = label.style_label_down, color = color.new(color.red, 20), textcolor = color.white)
+
+// ---------------- alerts ----------------
+alertcondition(enterTop, "Satoshi Clock: TOP window opens", "CLOCK reached 525 days after the halving. Historical mature-cycle tops: 525/546/534d.")
+alertcondition(enterBot, "Satoshi Clock: BOTTOM window opens", "CLOCK reached 889 days after the halving. Historical bottoms: 889/912d (weaker).")
+alertcondition(not na(spring) and spring > 1 and (na(spring[1]) or spring[1] <= 1), "SPRING stretched (+1z)", "Price is more than +1z above the causal power-law trend.")
+alertcondition(not na(spring) and spring < -1 and (na(spring[1]) or spring[1] >= -1), "SPRING compressed (-1z)", "Price is more than -1z below the causal power-law trend.")
+alertcondition(not na(spring) and spring < -2 and (na(spring[1]) or spring[1] >= -2), "SPRING deep value (-2z)", "Price is more than -2z below the causal power-law trend (historically rare deep-value).")

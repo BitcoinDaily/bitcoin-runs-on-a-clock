@@ -1,0 +1,15 @@
+period 2011-08-18 -> 2026-06-10  stop=35% max_hold=540d fee=0.15%/side
+buy&hold (same R units, 1 trade): +14972.0R
+
+########## SIGNAL = pl_z  (enter z<-1.0, exit z>=0.0) ##########
+  ALL    n=   6  win= 66.7%  PF= 7.39  avgR=+2.147  totR=  +12.9  maxDD=   -1.0
+  train  n=   5  win= 60.0%  PF= 7.37  avgR=+2.568  totR=  +12.8  maxDD=   -1.0
+  test   n=   1  win=100.0%  PF=99.90  avgR=+0.042  totR=   +0.0  maxDD=   +0.0
+  years: 2014:-2R/0%/PF0.0  2015:+6R/100%/PF99.9  2020:+5R/100%/PF99.9  2022:+3R/100%/PF99.9  2026:+0R/100%/PF99.9
+  ASSESS (test): PF 99.90 >= 1.5 [CLEARS BAR] | win 100% (high-win, preferred) | avgR +0.042
+  per-epoch:
+    E1_2013   n=  3 win= 33.3% PF= 3.02 avgR=+1.356 totR=   +4.1 maxDD=  -1.0 Sharpe=+0.70
+    E2_2017   n=  1 win=100.0% PF=99.90 avgR=+5.420 totR=   +5.4 maxDD=  +0.0 Sharpe=+0.00
+    E3_2021   n=  1 win=100.0% PF=99.90 avgR=+3.352 totR=   +3.4 maxDD=  +0.0 Sharpe=+0.00
+    E4_2025   n=  1 win=100.0% PF=99.90 avgR=+0.042 totR=   +0.0 maxDD=  +0.0 Sharpe=+0.00
+

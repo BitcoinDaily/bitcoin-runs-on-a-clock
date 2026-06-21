@@ -1,0 +1,18 @@
+self-check on REAL series:
+  mature-epoch tops n=4, (A) selection min range=21d (<=21), min 3-subset bottom range=37d (<=42), (B) epoch-max criterion ok=True
+  top_ok=True bot_ok=True
+
+block-bootstrap null: B=2000 paths per block length, same calendar/halvings, same turn rule, selection-symmetric scoring
+      L  B:epoch-max  A:selection  P(bot<=42d)   A joint  avg mature tops
+     30       0.0000       0.0015       0.4345    0.0015             4.67
+     60       0.0000       0.0010       0.4280    0.0010             4.54
+     90       0.0000       0.0025       0.3745    0.0015             4.27
+    120       0.0000       0.0015       0.3665    0.0010             4.26
+    250       0.0000       0.0015       0.3085    0.0010             3.87
+
+  pooled across block lengths: B(epoch-max) 0/10000 hits  |  A(selection) 16/10000 hits
+
+interpretation: P(joint) is the probability that a Bitcoin-like drawdown process,
+with NO relationship to the halving calendar, reproduces a turn regularity at least
+as tight as the one observed — under scoring that grants the null every selection
+freedom the observed statistic enjoyed.

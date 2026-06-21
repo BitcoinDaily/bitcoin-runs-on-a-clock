@@ -1,0 +1,31 @@
+=== 1. PERMUTATION / NULL TEST — could the 6 calls be luck? ===
+  observed: top range 21d (525/546/534), bottom range 42d (406/364/366)
+
+    top window W     P(top) |   bot window W     P(bot) |    joint p
+            1458    0.00062 |            800    0.00798 |   4.92e-06
+            1100    0.00108 |            700    0.01037 |   1.12e-05
+             900    0.00161 |            600    0.01401 |   2.25e-05
+             700    0.00265 |            500    0.01998 |   5.29e-05
+  MC cross-check (W=700/500): P(top)=0.00269 P(bot)=0.02001 joint=5.39e-05
+  Even with the MOST conservative windows (turns forced into narrow plausible bands),
+  the joint probability of both clusters arising by chance is ~1e-4 or smaller.
+  footnote: tops as FRACTION of their (varying) halving gap: 0.374, 0.379, 0.366 — also tight.
+
+=== 2. THE SATOSHI CLOCK — current reading ===
+  as of 2026-05-23  (BTC $76,620)
+  CLOCK  = 763d after the 2024-04-20 halving
+  SPRING = -0.53 (causal power-law deviation z)
+  state: post-top bear, 229d after the 2025-10-06 top
+  BOTTOM WINDOW (top + 364..406d): 2026-10-05 .. 2026-11-16
+    cross-check via after-halving anchor (889-924d): 2026-09-26 .. 2026-10-31
+  NEXT TOP WINDOW (next halving ~2028-04-15 + 525..546d): 2029-09-22 .. 2029-10-13
+
+=== 3. damped-spiral table: SPRING at each cycle's turns (the dying amplitude) ===
+  TOP  2013-12-04  CLOCK= 371d  SPRING=+2.85
+  BOT  2015-01-14  CLOCK= 777d  SPRING=-1.46
+  TOP  2017-12-16  CLOCK= 525d  SPRING=+2.69
+  BOT  2018-12-15  CLOCK= 889d  SPRING=-0.61
+  TOP  2021-11-08  CLOCK= 546d  SPRING=+1.29
+  BOT  2022-11-09  CLOCK= 912d  SPRING=-1.17
+  TOP  2025-10-06  CLOCK= 534d  SPRING=+0.43
+  now  2026-05-23  CLOCK= 763d  SPRING=-0.53

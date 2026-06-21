@@ -1,0 +1,31 @@
+observed cells (NW rank-t, lag=h):
+  pl_z     h= 30  E3 t=-0.63  E4 t=-1.33  
+  pl_z     h= 90  E3 t=-1.03  E4 t=-0.90  
+  pl_z     h=180  E3 t=-2.69  E4 t=-2.63  <<< double-hit
+  mayer_z  h= 30  E3 t=+1.36  E4 t=-0.92  
+  mayer_z  h= 90  E3 t=+0.78  E4 t=-0.65  
+  mayer_z  h=180  E3 t=+0.61  E4 t=-1.17  
+  rsi      h= 30  E3 t=+1.99  E4 t=-0.21  
+  rsi      h= 90  E3 t=+1.51  E4 t=+0.29  
+  rsi      h=180  E3 t=+0.77  E4 t=-0.91  
+observed double-hits: ['pl_z@180d']
+
+running 2000 dependence-preserving rotation replicates ...
+  500/2000  running p(any double-hit) = 0.2120
+  1000/2000  running p(any double-hit) = 0.2130
+  1500/2000  running p(any double-hit) = 0.2087
+  2000/2000  running p(any double-hit) = 0.2145
+
+EMPIRICAL joint-replication p = 0.2145  (MC se 0.0092, B=2000)
+  [analytic envelope was 9 x 0.025^2 = 0.0056 — replace it with this number]
+  NW calibration under null: P(|t|>=1.96) per cell  E3=0.333  E4=0.168   (nominal 0.05 — divergence here is why the analytic number was unsafe)
+  per-cell double-hit rates under null:
+    pl_z     h=180  0.1220
+    pl_z     h= 90  0.0890
+    pl_z     h= 30  0.0315
+    mayer_z  h= 90  0.0305
+    mayer_z  h= 30  0.0265
+    rsi      h= 30  0.0115
+    mayer_z  h=180  0.0060
+    rsi      h= 90  0.0020
+    rsi      h=180  0.0000

@@ -1,0 +1,32 @@
+=== A. PERMUTATION VARIANTS (retrospective-regularity p, NOT a track record) ===
+  variant                           W=1458    W=1100    W=900     W=700   
+  tops mature-only (n=3, r=21)      0.0006    0.0011    0.0016    0.0026  
+  tops incl. E1   (n=4, r=175)      0.0063    0.0142    0.0251    0.0508  
+  bottoms         (n=3, r=42)       0.0080    0.0104    0.0140    0.0200  
+
+  JOINT (tops x bottoms; product valid because the null draws the two gaps
+  independently by construction):
+    headline (mature tops)   generous 4.92e-06   most-conservative 5.29e-05
+    HOSTILE (E1 top incl.)   generous 5.02e-05   most-conservative 1.01e-03
+
+=== B. MULTIPLE COMPARISONS — full 36-cell grid, BH-FDR ===
+  BH-FDR q=0.05: 0/36 cells survive
+  BH-FDR q=0.1: 0/36 cells survive
+
+  top-10 cells by p:
+    rsi      h= 90 E2  IC=+0.30  NW-t=+3.56  p=0.015
+    pl_z     h=180 E4  IC=-0.51  NW-t=-2.63  p=0.025
+    pl_z     h=180 E3  IC=-0.40  NW-t=-2.69  p=0.045
+    rsi      h= 30 E3  IC=+0.17  NW-t=+1.99  p=0.058
+    rsi      h= 30 E1  IC=+0.22  NW-t=+2.23  p=0.063
+    pl_z     h=180 E2  IC=-0.41  NW-t=-1.97  p=0.122
+    rsi      h= 30 E2  IC=+0.14  NW-t=+1.67  p=0.127
+    rsi      h=180 E2  IC=+0.22  NW-t=+1.83  p=0.139
+    pl_z     h= 30 E4  IC=-0.17  NW-t=-1.33  p=0.179
+    pl_z     h= 30 E2  IC=-0.15  NW-t=-1.28  p=0.188
+
+  joint-replication check (same cell sig. at 5%, same sign, in BOTH E3 and E4):
+    observed: ['pl_z@180d (p=0.045, 0.025)']
+    expected under global null (9 cells, one-sided 2.5% each epoch): 0.0056 cells -> P(>=1) ~ 0.006
+    NOTE: pl_z@180d was the project's stated hypothesis before testing (documented
+    in the research log), and the same cell replicates on Coin Metrics and on ETH.

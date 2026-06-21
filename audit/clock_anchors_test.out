@@ -1,0 +1,30 @@
+THE THREE CLOCKS  (days for each turn under each anchor)
+==============================================================================
+
+TOPS
+     top  after halving  until next halv  after prev bottom
+    2013            371              948               None
+    2017            525              877               1067
+    2021            546              894               1059
+    2025            534              922               1062
+  mature range:  after-halving  21d   until-next  45d   after-prev-bottom   8d
+
+BOTTOMS
+  bottom  after halving  until next halv  after prev top
+    2015            777              542             406
+    2018            889              513             364
+    2022            912              528             366
+  range:         after-halving 135d   until-next  29d   after-top  42d
+
+DO THE ANCHORS AGREE ON THE 2026 BOTTOM?
+  after-top (364-406d)     -> 2026-10-05 .. 2026-11-16
+  until-next-halving       -> 2026-10-21 .. 2026-11-19
+  after-halving            -> 2026-06-06 .. 2026-10-19
+  OVERLAP of all three: 2026-10-21 .. 2026-10-19  (NO overlap)
+
+NULL TEST — is the bottom's tightness real clock-lock, or process-intrinsic?
+  (block-bootstrap Bitcoin returns, same halving calendar, same mechanical turn rule,
+   measure how often a RANDOM path's bottoms cluster as tightly as observed)
+  observed bottom range:  after-top 42d   until-next-halving 29d
+  random path reproduces after-top  <= 42d:  11% of paths
+  random path reproduces until-next <= 29d:     0% of paths

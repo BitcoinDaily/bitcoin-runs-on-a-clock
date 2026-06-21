@@ -1,0 +1,47 @@
+period 2011-08-18 -> 2026-06-10 (5411d)  ann=365, long/flat, causal 1d lag
+==============================================================================
+
+  FULL SAMPLE  (2011-08-18..2026-06-10, 5411d)
+    buy&hold   Sharpe=+1.13  CAGR=  +79.2%  maxDD= -84.9%  tim=100%
+    pl_z       Sharpe=+0.67  CAGR=  +22.3%  maxDD= -74.5%  tim=  53%   Sharpe vs B&H: -0.46
+    mayer_z    Sharpe=+0.46  CAGR=  +10.7%  maxDD= -75.5%  tim=  58%   Sharpe vs B&H: -0.67
+    rsi        Sharpe=+0.22  CAGR=   -4.7%  maxDD= -82.3%  tim=  44%   Sharpe vs B&H: -0.91
+
+  TRAIN (pre-2025)  (2011-08-18..2024-12-31, 4885d)
+    buy&hold   Sharpe=+1.23  CAGR=  +96.8%  maxDD= -84.9%  tim=100%
+    pl_z       Sharpe=+0.75  CAGR=  +27.1%  maxDD= -74.5%  tim=  53%   Sharpe vs B&H: -0.48
+    mayer_z    Sharpe=+0.53  CAGR=  +14.6%  maxDD= -75.5%  tim=  56%   Sharpe vs B&H: -0.70
+    rsi        Sharpe=+0.27  CAGR=   -2.0%  maxDD= -82.3%  tim=  43%   Sharpe vs B&H: -0.95
+
+  TEST (2025-2026)  (2025-01-01..2026-06-10, 526d)
+    buy&hold   Sharpe=-0.41  CAGR=  -24.6%  maxDD= -51.2%  tim=100%
+    pl_z       Sharpe=-0.30  CAGR=  -14.5%  maxDD= -40.9%  tim=  46%   Sharpe vs B&H: +0.11
+    mayer_z    Sharpe=-0.31  CAGR=  -19.6%  maxDD= -50.7%  tim=  83%   Sharpe vs B&H: +0.10
+    rsi        Sharpe=-0.66  CAGR=  -26.7%  maxDD= -45.6%  tim=  54%   Sharpe vs B&H: -0.25
+
+==============================================================================
+  PER-EPOCH (Sharpe edge vs buy&hold is the cross-cycle decay test)
+
+  EPOCH 1  (2012-11-28..2016-07-08, 1319d)
+    buy&hold   Sharpe=+1.64  CAGR= +203.0%  maxDD= -84.9%  tim=100%
+    pl_z       Sharpe=+0.66  CAGR=  +23.8%  maxDD= -74.5%  tim=  75%   Sharpe vs B&H: -0.99
+    mayer_z    Sharpe=+0.65  CAGR=  +23.0%  maxDD= -75.1%  tim=  68%   Sharpe vs B&H: -0.99
+    rsi        Sharpe=+0.38  CAGR=   +4.1%  maxDD= -70.8%  tim=  42%   Sharpe vs B&H: -1.27
+
+  EPOCH 2  (2016-07-09..2020-05-10, 1402d)
+    buy&hold   Sharpe=+1.24  CAGR=  +95.6%  maxDD= -83.4%  tim=100%
+    pl_z       Sharpe=+0.83  CAGR=  +32.0%  maxDD= -53.3%  tim=  47%   Sharpe vs B&H: -0.41
+    mayer_z    Sharpe=+0.43  CAGR=   +7.6%  maxDD= -75.5%  tim=  60%   Sharpe vs B&H: -0.81
+    rsi        Sharpe=+0.05  CAGR=  -14.6%  maxDD= -82.0%  tim=  42%   Sharpe vs B&H: -1.19
+
+  EPOCH 3  (2020-05-11..2024-04-19, 1440d)
+    buy&hold   Sharpe=+1.11  CAGR=  +65.6%  maxDD= -76.7%  tim=100%
+    pl_z       Sharpe=+0.85  CAGR=  +29.6%  maxDD= -56.8%  tim=  59%   Sharpe vs B&H: -0.26
+    mayer_z    Sharpe=+0.51  CAGR=  +13.8%  maxDD= -70.7%  tim=  56%   Sharpe vs B&H: -0.60
+    rsi        Sharpe=+0.23  CAGR=   +0.4%  maxDD= -66.8%  tim=  44%   Sharpe vs B&H: -0.89
+
+  EPOCH 4  (2024-04-20..2026-06-10, 782d)
+    buy&hold   Sharpe=+0.20  CAGR=   -1.3%  maxDD= -51.2%  tim=100%
+    pl_z       Sharpe=+0.33  CAGR=   +5.5%  maxDD= -40.9%  tim=  47%   Sharpe vs B&H: +0.12
+    mayer_z    Sharpe=+0.01  CAGR=   -7.4%  maxDD= -50.7%  tim=  74%   Sharpe vs B&H: -0.19
+    rsi        Sharpe=-0.18  CAGR=  -12.2%  maxDD= -45.6%  tim=  50%   Sharpe vs B&H: -0.38

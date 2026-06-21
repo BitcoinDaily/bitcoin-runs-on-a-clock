@@ -1,0 +1,22 @@
+
+CLOCK-TIMING vs BUY-AND-HOLD   (cash when 525 <= days-since-halving <= 900, else long; causal 1-day lag)
+data 2011-08-18 -> 2026-06-10   (5411 days)
+============================================================================================
+   cycle                    window  time-in   TIMING ret     HOLD ret  TIMING dd   HOLD dd
+    2013    2012-11-28..2016-07-09     71%      +10,279%      +5,393%       -71%      -85%
+    2017    2016-07-09..2020-05-11     73%       +6,935%      +1,217%       -63%      -83%
+    2021    2020-05-11..2024-04-20     74%       +2,078%        +631%       -53%      -77%
+    2025    2024-04-20..2026-06-10     67%          +72%          -3%       -28%      -51%
+--------------------------------------------------------------------------------------------
+  ALL CYCLES STACKED: timing made 302,618x vs hold 5,698x =  53.1x more money than holding
+  WORST CRASH (max drawdown):  timing -81%   vs   hold -85%
+============================================================================================
+  timing beat hold on RETURN in 4/4 cycles, on DRAWDOWN in 4/4 cycles.
+
+ROBUSTNESS SWEEP — all-stacked ratio (x more than hold) and #cycles timing wins on return
+  sell\buy    860     880     900     920     940
+    505      13x/4    23x/4    20x/4    25x/4    23x/4
+    515      23x/4    40x/4    34x/4    44x/4    40x/4
+    525      35x/4    62x/4    53x/4    69x/4    62x/4
+    535      32x/4    57x/4    48x/4    63x/4    56x/4
+    545      40x/4    71x/4    60x/4    79x/4    71x/4

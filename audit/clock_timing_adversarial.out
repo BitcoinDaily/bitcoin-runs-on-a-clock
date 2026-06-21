@@ -1,0 +1,34 @@
+A. WINDOW-PLACEMENT SWEEP  (fixed width 375d, slide the cash window's start)
+    start       window    ratio  wins   (ratio<1 = LOSES to hold)
+        0        0-375     0.0x     0  (boom)
+       60       60-435     0.0x     0  (boom)
+      120      120-495     0.0x     0  (boom)
+      180      180-555     0.0x     0  (boom)
+      240      240-615     0.0x     1  (boom)
+      300      300-675     0.1x     2  (boom)
+      360      360-735     1.8x     3  (boom)
+      420      420-795     6.6x     3
+      480      480-855    11.6x     4  <-- TRUE bust window
+      540      540-915    64.6x     4  <-- TRUE bust window
+      600      600-975    23.7x     4
+      660     660-1035     4.4x     4
+      720     720-1095     0.9x     3
+      780     780-1155     0.2x     0
+      840     840-1215     0.3x     0
+      900     900-1275     0.1x     0
+      960     960-1335     0.1x     0
+     1020    1020-1395     0.1x     0
+     1080    1080-1455     0.3x     1
+   peak ratio at start=540d (65x)
+
+B. PLACEBO vs RANDOM CASH
+   real bust window (525-900):  53.1x, wins 4/4
+   placebo boom window (150-525):   0.0x, wins 0/4
+   random 26%-cash (500 draws): median 0.12x, p95 0.95x, P(ratio>=1) = 4%, P(ratio>=53) = 0.0%
+
+C. LEAVE-ONE-CYCLE-OUT  (window optimized on the OTHER 3 cycles, applied out-of-sample)
+    held-out   best window on other 3  OOS ratio  OOS timing%  OOS hold%
+           1        sell 530, buy 940       1.8x      +9,576%    +5,393%  WIN
+           2        sell 550, buy 920       4.1x      +5,338%    +1,217%  WIN
+           3        sell 550, buy 880       3.3x      +2,312%      +631%  WIN
+           4        sell 550, buy 920       1.7x         +69%        -3%  WIN

@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+
+# Private / third-party evidence (NOT for public repo).
+# ig_reel.mp4: raw video; the public record is the archived link cited in the paper.
+# yt_comments.info.json: contains third-party commenter usernames (PII).
+# frames/: extracted video frames (scratch).
+# ig_reel_metadata.json: platform metadata dump that embeds third-party commenter handles (PII).
+ig_reel.mp4
+ig_reel_metadata.json
+yt_comments.info.json
+frames/
+
+# Scratch / build artifacts
+paper/manuscript.html
+archive_check.html
+archive_ph_response.html
+*.vtt

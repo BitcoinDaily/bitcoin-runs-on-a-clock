@@ -1,0 +1,6 @@
+# Normalize line endings so the repo is clean across OSes (silences CRLF warnings)
+* text=auto eol=lf
+*.png binary
+*.pdf binary
+*.mp4 binary
+*.ots binary

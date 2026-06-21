@@ -1,0 +1,147 @@
+//@version=6
+indicator("Bitcoin Cycle Phase Map — Boom / Bust / Recovery", "PhaseMap", overlay = true, max_lines_count = 40, max_labels_count = 60, max_boxes_count = 30)
+
+// ============================================================================
+// CYCLE PHASE MAP — companion to the Satoshi Clock and to Molnar (2026),
+// "Bitcoin Runs on a Clock" (Test 5 / Section 5.8). Where the Satoshi Clock shows how
+// STRETCHED price is, this shows what PHASE of the 4-year halving cycle you are in and what
+// historically came next:
+//   BOOM      0   to 520 days after the halving   (avg next-90d return strongly POSITIVE)
+//   BUST    520   to 910 days after the halving   (avg next-90d return NEGATIVE)
+//   RECOVERY 910  days to the next halving         (turns positive again)
+// The boom->bust flip at ~520 days lines up with the mechanically dated top window (525-546).
+//
+// Causal: days-since-halving is known years ahead, so the zones can be drawn into the future.
+// The phase->return numbers are the paper's pooled historical averages (descriptive, n=3-4
+// cycles); this is a cycle road-map, not a guarantee. Use on DAILY / WEEKLY / MONTHLY, log scale.
+// ============================================================================
+
+// ---------------- inputs ----------------
+grpD = "Display"
+showZones   = input.bool(true,  "Shade boom / bust / recovery zones", group = grpD)
+showProject = input.bool(true,  "Project the upcoming zones forward", group = grpD)
+showBounds  = input.bool(true,  "Zone boundary lines + halvings", group = grpD)
+showTable   = input.bool(true,  "Status table", group = grpD)
+tblPosIn    = input.string("Bottom Right", "Table position", group = grpD, options = ["Bottom Right", "Bottom Left", "Bottom Center", "Top Right", "Top Left", "Middle Right", "Middle Left"])
+
+grpZ = "Zone boundaries (days after halving)"
+boomEnd = input.int(520, "Boom ends / Bust begins", minval = 100, group = grpZ)
+bustEnd = input.int(910, "Bust ends / Recovery begins", minval = 200, group = grpZ)
+
+// ---------------- time anchors ----------------
+DAY = 86400000
+H1 = timestamp("2012-11-28T00:00:00+0000")
+H2 = timestamp("2016-07-09T00:00:00+0000")
+H3 = timestamp("2020-05-11T00:00:00+0000")
+H4 = timestamp("2024-04-20T00:00:00+0000")
+H5 = timestamp("2028-04-15T00:00:00+0000")   // estimate; drifts
+halvings = array.from(H1, H2, H3, H4, H5)
+
+int lastH = time >= H5 ? H5 : time >= H4 ? H4 : time >= H3 ? H3 : time >= H2 ? H2 : time >= H1 ? H1 : na
+float clock = na(lastH) ? na : (time - lastH) / DAY
+nextH() =>
+    int b = na
+    for h in halvings
+        if h > time and (na(b) or h < b)
+            b := h
+    b
+
+// ---------------- phase -> historical avg forward-90-day return (Test 5, 130-day bins, %) -----
+phaseReturn(float c) =>
+    na(c) ? na :
+     c < 130 ? 107.0 : c < 260 ? 68.0 : c < 390 ? 104.0 : c < 520 ? 36.0 :
+     c < 650 ? -22.0 : c < 780 ? -20.0 : c < 910 ? -10.0 :
+     c < 1040 ? 53.0 : c < 1170 ? 3.0 : 24.0
+
+// ---------------- current zone ----------------
+isBoom = not na(clock) and clock < boomEnd
+isBust = not na(clock) and clock >= boomEnd and clock < bustEnd
+isRec  = not na(clock) and clock >= bustEnd
+zone   = na(clock) ? "n/a" : isBoom ? "BOOM" : isBust ? "BUST" : "RECOVERY"
+zCol   = isBoom ? color.green : isBust ? color.red : isRec ? color.blue : color.gray
+
+// ---------------- background shading (historical + current bars) ----------------
+bgcolor(showZones and isBoom ? color.new(color.green, 88) : showZones and isBust ? color.new(color.red, 88) : showZones and isRec ? color.new(color.blue, 90) : na)
+
+// ---------------- boundary + halving lines ----------------
+if showBounds and barstate.isconfirmed
+    for h in halvings
+        if time[1] < h and time >= h
+            line.new(h, low, h, high, xloc = xloc.bar_time, extend = extend.both, color = color.new(color.gray, 35), style = line.style_dashed)
+            label.new(h, high, "halving", xloc = xloc.bar_time, style = label.style_label_down, color = color.new(color.gray, 75), textcolor = color.white, size = size.small)
+        be = h + boomEnd * DAY
+        bu = h + bustEnd * DAY
+        if time[1] < be and time >= be
+            line.new(be, low, be, high, xloc = xloc.bar_time, extend = extend.both, color = color.new(color.red, 55), style = line.style_dotted)
+        if time[1] < bu and time >= bu
+            line.new(bu, low, bu, high, xloc = xloc.bar_time, extend = extend.both, color = color.new(color.blue, 55), style = line.style_dotted)
+
+// ---------------- forward projection: shade the upcoming zones ----------------
+var box bxBust = na, var box bxRec = na, var box bxBoom2 = na
+var label lbBust = na, var label lbRec = na, var label lbBoom2 = na
+f_box(int s, int e, color col) => box.new(s, 1e9, e, 1e-3, xloc = xloc.bar_time, bgcolor = col, border_color = color.new(color.gray, 80))
+if showProject and showZones and barstate.islast and not na(lastH)
+    box.delete(bxBust), box.delete(bxRec), box.delete(bxBoom2)
+    label.delete(lbBust), label.delete(lbRec), label.delete(lbBoom2)
+    nh = nextH()
+    bustStart = lastH + boomEnd * DAY
+    recStart  = lastH + bustEnd * DAY
+    // remaining BUST of the current cycle (if the future part is still ahead)
+    if not na(nh) and recStart > time
+        s = math.max(bustStart, time)
+        bxBust := f_box(s, recStart, color.new(color.red, 90))
+        lbBust := label.new(math.max(bustStart, time), close, "BUST\n(sit-out zone)", xloc = xloc.bar_time, style = label.style_label_up, color = color.new(color.red, 25), textcolor = color.white, size = size.small)
+    // RECOVERY to the next halving
+    if not na(nh) and nh > time
+        s = math.max(recStart, time)
+        bxRec := f_box(s, nh, color.new(color.blue, 92))
+        lbRec := label.new(math.max(recStart, time), close, "RECOVERY", xloc = xloc.bar_time, style = label.style_label_up, color = color.new(color.blue, 25), textcolor = color.white, size = size.small)
+    // next cycle's BOOM (next halving -> +boomEnd)
+    if not na(nh)
+        bxBoom2 := f_box(nh, nh + boomEnd * DAY, color.new(color.green, 90))
+        lbBoom2 := label.new(nh, close, "next BOOM", xloc = xloc.bar_time, style = label.style_label_up, color = color.new(color.green, 25), textcolor = color.white, size = size.small)
+
+// ---------------- next transition ----------------
+nh = nextH()
+float daysToNext = na
+string nextZone = na
+if not na(clock)
+    if isBoom
+        daysToNext := boomEnd - clock
+        nextZone := "BUST"
+    else if isBust
+        daysToNext := bustEnd - clock
+        nextZone := "RECOVERY"
+    else if isRec and not na(nh)
+        daysToNext := (nh - time) / DAY
+        nextZone := "BOOM (next cycle)"
+
+// ---------------- table ----------------
+tblPos = tblPosIn == "Top Right" ? position.top_right : tblPosIn == "Top Left" ? position.top_left : tblPosIn == "Bottom Left" ? position.bottom_left : tblPosIn == "Bottom Center" ? position.bottom_center : tblPosIn == "Middle Right" ? position.middle_right : tblPosIn == "Middle Left" ? position.middle_left : position.bottom_right
+var table tbl = table.new(tblPos, 2, 6, bgcolor = color.new(color.black, 15), border_width = 1, border_color = color.new(color.gray, 60))
+if showTable and barstate.islast
+    pr = phaseReturn(clock)
+    table.cell(tbl, 0, 0, "CYCLE PHASE MAP", text_color = color.orange, text_size = size.small)
+    table.cell(tbl, 1, 0, zone, text_color = zCol, text_size = size.small)
+    table.cell(tbl, 0, 1, "days since halving", text_color = color.silver, text_size = size.small)
+    table.cell(tbl, 1, 1, na(clock) ? "n/a" : str.tostring(clock, "#"), text_color = color.white, text_size = size.small)
+    table.cell(tbl, 0, 2, "phase (of ~4yr)", text_color = color.silver, text_size = size.small)
+    table.cell(tbl, 1, 2, na(clock) ? "n/a" : str.tostring(clock / 1460 * 100, "#") + "%", text_color = color.white, text_size = size.small)
+    table.cell(tbl, 0, 3, "hist. avg next-90d", text_color = color.silver, text_size = size.small)
+    table.cell(tbl, 1, 3, na(pr) ? "n/a" : str.tostring(pr, "+#") + "%", text_color = na(pr) ? color.gray : pr > 0 ? color.green : color.red, text_size = size.small)
+    table.cell(tbl, 0, 4, "next zone", text_color = color.silver, text_size = size.small)
+    table.cell(tbl, 1, 4, na(nextZone) ? "n/a" : nextZone, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 0, 5, "in (days)", text_color = color.silver, text_size = size.small)
+    table.cell(tbl, 1, 5, na(daysToNext) ? "n/a" : str.tostring(daysToNext, "#"), text_color = color.white, text_size = size.small)
+
+// ---------------- timeframe guard ----------------
+if not (timeframe.isdaily or timeframe.isweekly or timeframe.ismonthly) and barstate.islast
+    var label warn = na
+    label.delete(warn)
+    warn := label.new(bar_index, high, "Phase Map works on Daily / Weekly / Monthly", style = label.style_label_down, color = color.new(color.red, 20), textcolor = color.white)
+
+// ---------------- alerts ----------------
+enterBust = not na(clock) and clock >= boomEnd and (na(clock[1]) or clock[1] < boomEnd)
+enterRec  = not na(clock) and clock >= bustEnd and (na(clock[1]) or clock[1] < bustEnd)
+alertcondition(enterBust, "Phase Map: entering BUST zone", "Cycle reached ~520 days after the halving: boom-to-bust flip (historical top window).")
+alertcondition(enterRec,  "Phase Map: entering RECOVERY zone", "Cycle reached ~910 days after the halving: bust-to-recovery flip (historical bottom region).")

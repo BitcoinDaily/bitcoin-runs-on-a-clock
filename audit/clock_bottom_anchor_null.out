@@ -1,0 +1,11 @@
+observed: after-top best-3 range = 42d, until-next-halving best-3 range = 29d
+
+      L   B:after-top<=42d  B:until-next<=29d
+     30             47.25%              1.85%
+     60             45.50%              1.90%
+     90             38.25%              1.40%
+    120             33.60%              1.35%
+    250             32.20%              1.15%
+
+  pooled: after-top 3936/10000 (39.36%)  |  until-next-halving 153/10000 (1.53%)
+  (after-top should land near the paper's locked 31-43%; until-next is the new anchor)
