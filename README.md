@@ -1,7 +1,9 @@
 # Bitcoin Runs on a Clock: Replication Package
 
 Code, data, and audit trail for: **Molnar (2026), "Bitcoin Runs on a Clock: Why Every Price
-Indicator Dies and the Halving Clock Doesn't"** (draft in `paper/`).
+Indicator Dies and the Halving Clock Doesn't"** (manuscript in `paper/`).
+
+**Preprint:** [SSRN abstract 6977940](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6977940) · **Live tracker:** [bitcoin-daily.com/cycle](https://bitcoin-daily.com/cycle)
 
 Every numerical claim in the manuscript maps to a line of script output. The mapping is indexed
 in **`RESULTS_LOCK.md`**; the captured stdout of a full end-to-end re-run lives in **`audit/`**.
