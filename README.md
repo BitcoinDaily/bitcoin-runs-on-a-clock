@@ -3,7 +3,9 @@
 Code, data, and audit trail for: **Molnar (2026), "Bitcoin Runs on a Clock: Why Every Price
 Indicator Dies and the Halving Clock Doesn't"** (manuscript in `paper/`).
 
-**Preprint:** [SSRN abstract 6977940](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6977940) · **Live tracker:** [bitcoin-daily.com/cycle](https://bitcoin-daily.com/cycle)
+**Preprint:** [arXiv:2607.26188](https://arxiv.org/abs/2607.26188) (q-fin.ST) · [SSRN 6977940](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6977940) (doi:10.2139/ssrn.6977940) · **Live tracker:** [bitcoin-daily.com/cycle](https://bitcoin-daily.com/cycle)
+
+*Current manuscript: v1.6 (July 2026), adding §5.9, the clock re-expressed in block height, its native protocol unit.*
 
 Every numerical claim in the manuscript maps to a line of script output. The mapping is indexed
 in **`RESULTS_LOCK.md`**; the captured stdout of a full end-to-end re-run lives in **`audit/`**.

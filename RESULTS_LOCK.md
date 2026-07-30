@@ -1,5 +1,11 @@
 # RESULTS_LOCK, every load-bearing manuscript number → script → captured output
 
+> **REVISION v1.6 (2026-07-21):** added the block-clock analysis (§3 Data note, §5.9, §8.2 block-height
+> windows, Appendix A scripts). New review PDF `paper/Bitcoin_Runs_on_a_Clock_Molnar_2026_draft.pdf`
+> sha256 **fc354ae01a1b**, 32 pages, content-certified **42/42**. Ledger `main.tex` re-built + certified
+> 42/42, abstract 199 words. Mappings in the "Block-clock revision" section below. STAGED for founder
+> review, not uploaded/pushed/submitted.
+
 ## ✅ INDEPENDENT VERIFICATION: COMPLETE (2026-06-11)
 A second analyst reproduced the paper's full core end-to-end on independently pulled data
 (Bitstamp + Coin Metrics, frozen to the lock dates), several rows bit-exact: signal library &
@@ -44,6 +50,33 @@ re-run reproduces these numbers exactly. To re-verify: run each script and diff 
 | **Return-by-phase (§5.8)** | fwd-90d return: +ve days 0-520, **−ve 520-910** (flip at top window), +ve recovery 910+ | clock_explorations2.py | audit/clock_explorations2.out |
 | **Volatility clock (§5.8 NULL/miss)** | peak-vol day 157/585/394 (range 428d), curve corr 0.15, placebo P=19%, does NOT lock (honest negative) | clock_explorations2.py | audit/clock_explorations2.out |
 | **Evidence figures (Fig 1/3/9)** | reproduce locked numbers w/ identical seeds: null tops 0/10,000 + selection 16/10,000(0.16%) + bottoms 3824/10,000(38%); placebo halving 21d/election 68d/random 71d/fixed 1423d, 0/2000 | paper/make_evidence_figs.py (reuses empirical_null_test.py SEED=31, clock placebo rng=7) | stdout check in commit |
+
+## Block-clock revision (manuscript v1.6, 2026-07-21) — §3 Data note + §5.9 + §8.2
+
+New load-bearing numbers, all reproducing from the seeded block-phase scripts (SEED=31 for the null,
+rng 7/3/5 for placebos, matching the day-clock originals). Height series from `build_height_series.py`.
+Captured stdout: `audit/block_phase_null.out`, `audit/block_phase_tests.out`, `audit/build_height_series.out`.
+
+| Manuscript claim | Value | Script | Output |
+|---|---|---|---|
+| Height series validation (§3) | CM BlkCnt genesis→2026-05-23, contiguous no gaps; 4 halvings reached within ±1d; 11 mempool lookups a constant +62..+103 (median +75) above end-of-day | build_height_series.py | audit/build_height_series.out |
+| **Block tops null (§5.9)** | epoch-max **0/10,000** (= day 0/10,000); selection-symmetric **3/10,000** (day 11/10,000) | block_phase_null.py | audit/block_phase_null.out |
+| **Block bottoms PARTIAL rescue (§5.9)** | after-halving phase-range day **171/10,000 (1.7%)** → block **16/10,000 (0.16%)**; conditional on structure **3.7%→0.3%**; top→bottom LAG NOT sharpened (day 0.42% / block 1.11%) = independent anchoring | block_phase_null.py | audit/block_phase_null.out |
+| **Bottom gap-stat STILL DEMOTED (§5.9)** | top→bottom duration reproduced **~40%** (day 4054/10,000); the block after-halving result is a PARTIAL rescue, NOT a reversal of the §4.5 demotion | block_phase_null.py | audit/block_phase_null.out |
+| **Block E1 reconciliation (§5.9)** | 2013-top ratio **0.693 (day) → 0.801 (block)**; early chain 170 vs 147 blk/day (+15%); hostile 4-top null **8/10,000 (day) → 3/10,000 (block)** | block_phase_null.py, block_phase_tests.py | audit/block_phase_null.out, audit/block_phase_tests.out |
+| **Block placebo clocks (§5.9)** | halving 1,723 / election 12,775 / fixed-cal 209,158; random-OFFSET degeneracy **P=98.5%** (period not phase, dissolves anchor question); random-PERIOD P(≤1,723)=**0.9%** | block_phase_tests.py | audit/block_phase_tests.out |
+| **Block LOSSES reported (§5.9)** | seasonality overlay **0.69 (block) < 0.72 (day)**; vol clock placebo **P=0.40 (block) vs 0.19 (day)** = still a MISS, worse; return-by-phase flip lands on 77,901..79,596-blk top band | block_phase_tests.py | audit/block_phase_tests.out |
+| **Block-height predictions (§8.2)** | 2026 bottom band **968,910..973,934** (= 840,000 + 128,910..133,934); 2029 top band **1,127,901..1,129,596** (= 1,050,000 + 77,901..79,596); logged 2026-07-21 pre-window | block_clock.py (mempool noon lookups) | block_clock_data.json |
+
+**INSTRUMENT NOTE.** Two consistent instruments. The manuscript phase BANDS (77,901..79,596 tops;
+128,910..133,934 bottoms; ranges 1,695 / 5,024) are the mempool.space noon point-lookups
+(`block_clock_data.json`, ground truth). The NULL p-values are scored by `block_phase_null.py` against
+the mechanical daily-series ranges (1,723 tops / 5,220 bottoms), which equal the ground truth within
+end-of-day sampling (+28 / +196 blocks); the deterministic 0/10,000 holds a fortiori at the tighter band.
+
+**PRESERVED DEMOTION.** The §4.5 / DOWNGRADED-item-0 bottom-timing demotion STANDS. The block
+after-halving result (0.16%) is a phase-based PARTIAL rescue on n=3, framed in §5.9 as a weak prior, and
+does NOT reinstate the demoted gap/duration statistic (still ~40%). §5.9 states this explicitly.
 
 ## Claims DOWNGRADED by the hardening passes (history, so it can't silently regress)
 0. **Bottom-timing cluster demoted.** The empirical drawdown null reproduces the ≤42d bottom-gap
@@ -107,3 +140,31 @@ re-run reproduces these numbers exactly. To re-verify: run each script and diff 
 
 ## Data freeze
 Bitstamp OHLC → 2026-06-10 · Coin Metrics → 2026-05-23 · macro (TV FRED mirror) → 2026-04.
+
+## Submission packaging (venue phase — mapping unchanged, logged so nothing regresses silently)
+- **SSRN**: live, abstract 6977940 (revised to the 8d764e1e PDF). **arXiv q-fin.ST**: parked
+  (Challet declined endorsement; Garcia-Medina no reply).
+- **Ledger** (ledgerjournal.org, Univ. of Pittsburgh) built 2026-07-17 in `submission/ledger/`
+  via `submission/build_ledger.py` (deterministic md→Ledger-class LaTeX; reuses the certified
+  `build_latex.py` body conversion, so §1–§9 + appendix prose is byte-identical to the arXiv build).
+  **Source content-certification: 42/42 LOCK numbers present** in `submission/ledger/main.tex`
+  (`python submission/certify.py submission/ledger/main.tex`); 0 em-dashes; 19 distinct cited keys
+  == 19 bib keys (raw \cite count 21 = newey1987 cited in 3 blocks, pre-existing, correct). **Not
+  compiled locally** (no TeX toolchain on this machine) → final PDF is an Overleaf step, then
+  re-certify the compiled PDF. (v1.6: +8 block-clock checks, 34→42.)
+- **Body prose, findings, numbers, tables: UNCHANGED.** Venue-only adaptations, none touching a
+  claim's calibration: (a) abstract compressed to a **194-word** Ledger-cap version (full ~647-word
+  abstract preserved verbatim in a `main.tex` comment; the compression mirrors this LOCK —
+  retrospective regularity, tops = the sharp test, IC descriptive, no upgraded verbs — and is a
+  **decision point flagged for author sign-off**, not a silent edit; v1.6 re-drafted to 199 words
+  with a block-clock clause added); (b) new front-matter prose
+  (Acknowledgements / Author Contributions / Conflict of Interest), the CoI mirroring §8.1's
+  disclosure; (c) numeric superscript `\cite` replacing natbib; (d) keywords with "Bitcoin" removed
+  per Ledger rule; (e) bib key `santostasi2024`→`santostasi2026` (mechanical; entry already carried
+  the peer-reviewed Santostasi & Perrenod 2026 content); (f) the promised public-repo URL filled into
+  Appendix A.
+- **Open decision for the founder:** Ledger word-count guidance is self-contradictory (live page
+  ≤10,000 vs 2015 AuthorGuide.pdf ≤4,000). Body now **≈10,115 words** (was ≈9,200; +~900 for the
+  §5.9 block clock, well under the +1,000 target). **No content was cut.** The §5.9 addition now
+  nudges the body just over the 10,000 live-page number; if Ledger enforces either limit, trimming
+  or moving §5.9 to an appendix is a science-side call for research-extender, not a packaging edit.

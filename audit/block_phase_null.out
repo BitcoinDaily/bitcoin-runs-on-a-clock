@@ -1,0 +1,48 @@
+aligned span 2011-08-18 -> 2026-05-23  (5393 rows; tail truncated to height coverage)
+
+real-series mechanical EPOCH-MAX TOPS (epoch : date : day-after-halving : block-after-halving):
+  ep0 2011-08-20  day   nan  blk      nan  $       12  early
+  ep1 2013-12-04  day   371  blk    63108  $    1,132  early
+  ep2 2017-12-16  day   525  blk    79686  $   19,188  MATURE
+  ep3 2021-11-08  day   546  blk    78844  $   67,559  MATURE
+  ep4 2025-10-06  day   534  blk    77963  $  124,728  MATURE
+real-series mechanical CYCLE BOTTOMS (trough between consecutive epoch-max tops):
+  cycle0 2011-10-20  day   nan  blk      nan  $        2  early
+  cycle1 2015-01-14  day   777  blk   128985  $      171  MATURE
+  cycle2 2018-12-15  day   889  blk   134006  $    3,180  MATURE
+  cycle3 2022-11-21  day   924  blk   134205  $   15,766  MATURE
+
+OBSERVED range statistics (mechanical; headline mempool value in parens):
+  TOP  epoch-max   day     21d (21)     block    1723 (1,695)
+  TOP  selection   day     21d (21)     block    1723 (1,695)
+  TOP  HOSTILE 4-top (incl 2013)   day   175d          block   16578
+  BOT  after-halv  day    147d (135)    block    5220 (5,024)
+  BOT  top->bottom gap best-3   day     37d (37, <=42 rule)
+  BOT  top->bottom LAG range (adversarial: bottom info beyond its top)   day     42d   block   11557
+
+block-bootstrap null: B=2000 per L in [30, 60, 90, 120, 250], SEED=31, same calendar, same turn rule.
+Each path scored in BOTH day and block phase (same draws).
+
+             L   top_em_day   top_em_blk  top_sel_day  top_sel_blk  bot_det_day  bot_det_blk  bot_gap_day
+            30       0.0000       0.0000       0.0005       0.0000       0.0210       0.0025       0.4805
+            60       0.0000       0.0000       0.0020       0.0000       0.0200       0.0015       0.4745
+            90       0.0000       0.0000       0.0010       0.0005       0.0145       0.0010       0.4020
+           120       0.0000       0.0000       0.0010       0.0010       0.0160       0.0015       0.3630
+           250       0.0000       0.0000       0.0010       0.0000       0.0140       0.0015       0.3070
+
+pooled over all block lengths (10000 paths):
+  TOP  epoch-max     day    0/10000   block    0/10000
+  TOP  selection     day   11/10000   block    3/10000
+  TOP  HOSTILE 4-top day    8/10000   block    3/10000    (E1 reconciliation: does block keep the 4-top variant more extreme?)
+  BOT  after-halving day  171/10000   block   16/10000    (<- THE BOTTOMS RESCUE)
+  BOT  gap best-3<=42 (day, empirical_null continuity)  4054/10000
+
+ADVERSARIAL — is the bottom rarity independent of the tops, or inherited?
+  paths with a valid 3-cycle bottom structure: 4578/10000
+  after-halving range CONDITIONAL on structure:  day   3.7%   block   0.3%
+  top->bottom LAG range (bottom info beyond its own top):  day   42/10000   block  111/10000
+    if the LAG range replicates as loosely as the gap stat (~40%), the after-halving
+    bottom rarity is largely the TOP phase-lock propagated, not independent evidence.
+
+NOTE thresholds are the mechanical real-series ranges (printed above), so the p is a
+like-for-like null-reproduction fraction. n=3 mature epochs; treat as a weak prior.

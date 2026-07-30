@@ -1,0 +1,29 @@
+fetching Coin Metrics btc.csv BlkCnt ...
+  got 2.5 MB
+  BlkCnt rows 6350  span 2009-01-03 -> 2026-05-23  non-1-day steps 0
+
+validation (a): protocol halving heights vs known dates (end-of-day series)
+  210,000 known 2012-11-28  first eod>=height on 2012-11-28  delta +0d   eod_height_on_known_date 210,062  OK
+  420,000 known 2016-07-09  first eod>=height on 2016-07-09  delta +0d   eod_height_on_known_date 420,051  OK
+  630,000 known 2020-05-11  first eod>=height on 2020-05-11  delta +0d   eod_height_on_known_date 630,027  OK
+  840,000 known 2024-04-20  first eod>=height on 2024-04-19  delta -1d   eod_height_on_known_date 840,132  OK
+
+validation (b): mempool noon point-lookups vs this end-of-day series
+  (eod runs ~+half-day higher than noon; report the offset, it is benign+constant)
+  2012-11-28  noon 209,974  eod 210,062  eod-noon   +88  halving@2012-11-28
+  2016-07-09  noon 419,967  eod 420,051  eod-noon   +84  halving@2016-07-09
+  2020-05-11  noon 629,955  eod 630,027  eod-noon   +72  halving@2020-05-11
+  2024-04-20  noon 840,068  eod 840,132  eod-noon   +64  halving@2024-04-20
+  2013-11-30  noon 272,280  eod 272,383  eod-noon  +103  topE1@2013-11-30
+  2017-12-16  noon 499,596  eod 499,686  eod-noon   +90  topE2@2017-12-16
+  2021-11-08  noon 708,781  eod 708,844  eod-noon   +63  topE3@2021-11-08
+  2025-10-06  noon 917,901  eod 917,963  eod-noon   +62  topE4@2025-10-06
+  2015-01-14  noon 338,910  eod 338,985  eod-noon   +75  bottomE1@2015-01-14
+  2018-12-15  noon 553,934  eod 554,006  eod-noon   +72  bottomE2@2018-12-15
+  2022-11-09  noon 762,412  eod 762,498  eod-noon   +86  bottomE3@2022-11-09
+
+  eod-minus-noon offset: median +75  min +62  max +103  (all same sign = pure sampling-time offset, cancels in ranges)
+  max deviation from the median offset: 28 blocks (intraday wobble)
+
+saved -> C:\Users\jaehe\Tradingview AI\PowerLaw\block_height_daily.csv  (6350 rows, 2009-01-03 -> 2026-05-23)
+VALIDATION PASSED — series is safe for the block-phase battery.

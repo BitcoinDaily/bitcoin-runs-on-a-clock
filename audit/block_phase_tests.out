@@ -1,0 +1,52 @@
+mature tops (E2/E3/E4): heights [499686, 708844, 917963]  dates ['2017-12-16', '2021-11-08', '2025-10-06']
+
+TEST 3 — PLACEBO CLOCKS IN BLOCK SPACE
+  halving-block clock (period 210,000, offset 0):  top range  1,723 blocks
+  election-dates mapped to heights:                top range 12,775 blocks
+  fixed-4yr-calendar mapped to heights:            top range 209,158 blocks
+  fixed-210k, RANDOM OFFSET (2000): median range  1,723, P(<= halving 1,723) = 98.5%   <- period does the work, not phase
+  RANDOM PERIOD (2000):             median range 87,495, P(<= halving 1,723) = 0.9%   <- is the 210k PERIOD special?
+  DAY reference: halving 21d, election 68d, fixed-4yr 1423d, random-4yr-PHASE P(<=21)=0%
+
+TEST 4 — SEASONALITY OVERLAY (block alignment vs day alignment)
+  DAY  aligned: E1-E2 0.82 E1-E3 0.72 E2-E3 0.61  mean 0.72
+  BLOCK aligned: E1-E2 0.84 E1-E3 0.64 E2-E3 0.57  mean 0.69
+  BLOCK placebo (random-offset): mean 0.04, P(random >= block-aligned) = 4.4%   (DAY was 0.72 / 0.02 / P=2.8%)
+  -> block alignment does NOT beat day alignment (0.69 vs 0.72)
+
+TEST 5 — RETURN-BY-PHASE (fwd-90d return by block phase vs day phase)
+  DAY phase bins:
+               0-130   +107%  n= 520  ++++++++++++++++++++++
+             130-260    +68%  n= 520  ++++++++++++++
+             260-390   +104%  n= 520  +++++++++++++++++++++
+             390-520    +36%  n= 520  ++++++++
+             520-650    -22%  n= 520  -----
+             650-780    -21%  n= 414  -----
+             780-910    -10%  n= 390  ---
+            910-1040    +53%  n= 390  +++++++++++
+           1040-1170     +3%  n= 390  +
+           1170-1300    +24%  n= 390  +++++
+    boom->bust flip at phase ~520 (DAY)
+  BLOCK phase bins:
+             0-19000   +109%  n= 514  ++++++++++++++++++++++
+         19000-38000    +62%  n= 497  +++++++++++++
+         38000-57000   +113%  n= 490  +++++++++++++++++++++++
+         57000-76000    +41%  n= 496  +++++++++
+         76000-95000    -14%  n= 495  ---
+        95000-114000    -22%  n= 393  -----
+       114000-133000    -20%  n= 392  -----
+       133000-152000    +39%  n= 390  ++++++++
+       152000-171000    +19%  n= 384  ++++
+       171000-190000    +16%  n= 377  ++++
+    boom->bust flip at phase ~76000 (BLOCK)
+
+TEST 6a — E1 (2013 TOP) CHAIN-SPEED RECONCILIATION
+  2013 top: day 371 (ratio 0.693 of mature mean 535d), block 63108 (ratio 0.801 of mature mean 78831)
+  early-chain speed 170.1 blk/day vs mature 147.3 blk/day (+15%)
+  earliness gap closed by block coordinate: 35%  (day gap 0.307 -> block gap 0.199)
+  counterfactual: at mature speed the 2013 top's 63108 blocks = day 428 (vs actual 371); ~35% of the way to the mature mean
+
+TEST 7 — VOLATILITY CLOCK (the day miss P=0.19; re-check in block phase)
+  DAY: peak-vol phase E1 157 E2 585 E3 394 (range 428), cross-cycle corr 0.15, placebo P(random>=real) 19.4%
+  BLOCK: peak-vol phase E1 24500 E2 82500 E3 57000 (range 58,000), cross-cycle corr 0.09, placebo P(random>=real) 40.2%
+  (day clock was a MISS at P=19.4%; report block honestly, hit or miss)
